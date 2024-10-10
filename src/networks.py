@@ -121,7 +121,7 @@ class E_content(nn.Module):
     self.convA = nn.Sequential(*encA_c)
     self.convB = nn.Sequential(*encB_c)
     self.inference_netA=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim) # InverenceNet class: to add from GMVAE
-    self.inference_netB=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim)
+    self.inference_netB=GMVAE.InferenceNet(input_dim_b, y_dim, z_dim)
 
   #def forward(self, xa, xb):
   def forward(self, xa, xb, temperature=1.0, hard=0):
@@ -162,7 +162,7 @@ class E_content(nn.Module):
     return inference_outputB
 
 class E_attr(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b, output_nc=8):
+  def __init__(self, input_dim_a, input_dim_b,y_dim, z_dim, output_nc=8):
     super(E_attr, self).__init__()
     dim = 64
     self.model_a = nn.Sequential(
@@ -201,24 +201,35 @@ class E_attr(nn.Module):
         nn.ReLU(inplace=True),
         nn.AdaptiveAvgPool2d(1),
         nn.Conv2d(dim*4, output_nc, 1, 1, 0))
+    
+    self.inference_netA=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim) # InverenceNet class: to add from GMVAE
+    self.inference_netB=GMVAE.InferenceNet(input_dim_b, y_dim, z_dim)
     return
 
-  def forward(self, xa, xb):
+  def forward(self, xa, xb, temperature=1.0, hard=0):
     xa = self.model_a(xa)
     xb = self.model_b(xb)
     output_A = xa.view(xa.size(0), -1)
     output_B = xb.view(xb.size(0), -1)
-    return output_A, output_B
+    
+     # get GMVAE parameters
+    inference_outputA=self.inference_netA(output_A, temperature, hard)
+    inference_outputB=self.inference_netB(output_B, temperature, hard)
+    
+    # return outputA, outputB
+    return inference_outputA, inference_outputB
 
-  def forward_a(self, xa):
+  def forward_a(self, xa, temperature=1.0, hard=0 ):
     xa = self.model_a(xa)
     output_A = xa.view(xa.size(0), -1)
-    return output_A
+    inference_outputA=self.inference_netA(output_A, temperature, hard)
+    return inference_outputA
 
-  def forward_b(self, xb):
+  def forward_b(self, xb, temperature=1.0, hard=0 ):
     xb = self.model_b(xb)
     output_B = xb.view(xb.size(0), -1)
-    return output_B
+    inference_outputB=self.inference_netB(output_B, temperature, hard)
+    return inference_outputB
 
 class E_attr_concat(nn.Module):
   def __init__(self, input_dim_a, input_dim_b, output_nc=8, norm_layer=None, nl_layer=None):
