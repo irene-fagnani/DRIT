@@ -37,6 +37,17 @@ class TrainOptions():
     self.parser.add_argument('--d_iter', type=int, default=3, help='# of iterations for updating content discriminator')
     self.parser.add_argument('--gpu', type=int, default=0, help='gpu')
 
+    #GMVAE parameters
+    self.parser.add_argument('--num_classes', type=int, default=2, help='number of classes (default: 2)')
+    self.parser.add_argument('--gaussian_size', default=64, type=int, help='gaussian size (default: 64) (z_dim)')
+
+    ## Gumbel parameters
+    self.parser.add_argument('--init_temp', default=1.0, type=float, help='Initial temperature used in gumbel-softmax (recommended 0.5-1.0, default:1.0)')
+    self.parser.add_argument('--decay_temp', default=1, type=int, help='Set 1 to decay gumbel temperature at every epoch (default: 1)')
+    self.parser.add_argument('--hard_gumbel', default=0, type=int, help='Set 1 to use the hard version of gumbel-softmax (default: 1)')
+    self.parser.add_argument('--min_temp', default=0.5, type=float, help='Minimum temperature of gumbel-softmax after annealing (default: 0.5)' )
+    self.parser.add_argument('--decay_temp_rate', default=0.013862944, type=float, help='Temperature decay rate at every epoch (default: 0.013862944)')
+
   def parse(self):
     self.opt = self.parser.parse_args()
     args = vars(self.opt)

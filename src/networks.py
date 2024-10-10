@@ -4,6 +4,7 @@ from torch.autograd import Variable
 import functools
 from torch.optim import lr_scheduler
 import torch.nn.functional as F
+import GMVAE
 
 ####################################################################
 #------------------------- Discriminators --------------------------
@@ -91,7 +92,7 @@ class Dis(nn.Module):
 #---------------------------- Encoders -----------------------------
 ####################################################################
 class E_content(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b):
+  def __init__(self, input_dim_a, input_dim_b, y_dim, z_dim):
     super(E_content, self).__init__()
     encA_c = []
     tch = 64
@@ -119,10 +120,11 @@ class E_content(nn.Module):
 
     self.convA = nn.Sequential(*encA_c)
     self.convB = nn.Sequential(*encB_c)
-    self.inference_net=InferenceNet(x_dim, y_dim, z_dim) # InverenceNet class: to add from GMVAE
+    self.inference_netA=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim) # InverenceNet class: to add from GMVAE
+    self.inference_netB=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim)
 
   #def forward(self, xa, xb):
-  def forward(self, xa, xb, temberature=1.0, hard=0):
+  def forward(self, xa, xb, temperature=1.0, hard=0):
     outputA = self.convA(xa)
     outputB = self.convB(xb)
     outputA = self.conv_share(outputA)
@@ -133,29 +135,29 @@ class E_content(nn.Module):
     flattened_B=outputB.view(outputB.size(0), -1)
     
     # get GMVAE parameters
-    inference_outputA=self.inference_net(flattened_A, temperature, hard)
-    inference_outputB=self.inference_net(flattened_B, temperature, hard)
+    inference_outputA=self.inference_netA(flattened_A, temperature, hard)
+    inference_outputB=self.inference_netB(flattened_B, temperature, hard)
     
 # return outputA, outputB
     return inference_outputA, inference_outputB
 
-  def forward_a(self, xa):
+  def forward_a(self, xa, temperature=1.0, hard=0):
     outputA = self.convA(xa)
     outputA = self.conv_share(outputA)
 
     flattened_A=outputA.view(outputA.size(0), -1)
 
-    inference_outputA=self.inference_net(flattened_A, temperature, hard)
+    inference_outputA=self.inference_netA(flattened_A, temperature, hard)
 
     return inference_outputA
 
-  def forward_b(self, xb):
+  def forward_b(self, xb, temperature=1.0, hard=0):
     outputB = self.convB(xb)
     outputB = self.conv_share(outputB)
 
     flattened_B=outputB.view(outputB.size(0), -1)
 
-    inference_outputB=self.inference_net(flattened_B, temperature, hard)
+    inference_outputB=self.inference_netB(flattened_B, temperature, hard)
 
     return inference_outputB
 
