@@ -119,13 +119,25 @@ class E_content(nn.Module):
 
     self.convA = nn.Sequential(*encA_c)
     self.convB = nn.Sequential(*encB_c)
+    self.inference_net=InferenceNet(x_dim, y_dim, z_dim) # InverenceNet class: to add from GMVAE
 
-  def forward(self, xa, xb):
+  #def forward(self, xa, xb):
+  def forward(self, xa, xb, temberature=1.0, hard=0):
     outputA = self.convA(xa)
     outputB = self.convB(xb)
     outputA = self.conv_share(outputA)
     outputB = self.conv_share(outputB)
-    return outputA, outputB
+    
+    # flatten the concolutional output, to be compatible with inference net
+    flattened_A=outputA.view(outputA.size(0), -1)
+    flattened_B=outputB.view(outputB.size(0), -1)
+    
+    # get GMVAE parameters
+    inference_outputA=self.inference_net(flattened_A, temberature, hard)
+    inference_outputB=self.inference_net(flattened_B, temberature, hard)
+    
+# return outputA, outputB
+    return inference_outputA, inference_outputB
 
   def forward_a(self, xa):
     outputA = self.convA(xa)
