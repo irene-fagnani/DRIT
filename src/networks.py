@@ -133,8 +133,8 @@ class E_content(nn.Module):
     flattened_B=outputB.view(outputB.size(0), -1)
     
     # get GMVAE parameters
-    inference_outputA=self.inference_net(flattened_A, temberature, hard)
-    inference_outputB=self.inference_net(flattened_B, temberature, hard)
+    inference_outputA=self.inference_net(flattened_A, temperature, hard)
+    inference_outputB=self.inference_net(flattened_B, temperature, hard)
     
 # return outputA, outputB
     return inference_outputA, inference_outputB
@@ -142,12 +142,22 @@ class E_content(nn.Module):
   def forward_a(self, xa):
     outputA = self.convA(xa)
     outputA = self.conv_share(outputA)
-    return outputA
+
+    flattened_A=outputA.view(outputA.size(0), -1)
+
+    inference_outputA=self.inference_net(flattened_A, temperature, hard)
+
+    return inference_outputA
 
   def forward_b(self, xb):
     outputB = self.convB(xb)
     outputB = self.conv_share(outputB)
-    return outputB
+
+    flattened_B=outputB.view(outputB.size(0), -1)
+
+    inference_outputB=self.inference_net(flattened_B, temperature, hard)
+
+    return inference_outputB
 
 class E_attr(nn.Module):
   def __init__(self, input_dim_a, input_dim_b, output_nc=8):
