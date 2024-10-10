@@ -278,24 +278,22 @@ class E_attr_concat(nn.Module):
     
     # Use output_A and outputVar_A as input for InferenceNet to get latent variables for domain A
     inference_output_A = self.inference_net(output_A, temperature, hard)
-    z_A = inference_output_A['gaussian']
-    y_A = inference_output_A['categorical']
+    #z_A = inference_output_A['gaussian']
+    #y_A = inference_output_A['categorical']
 
     # Use output_B and outputVar_B as input for InferenceNet to get latent variables for domain B
     inference_output_B = self.inference_net(output_B, temperature, hard)
-    z_B = inference_output_B['gaussian']
-    y_B = inference_output_B['categorical']
+    #z_B = inference_output_B['gaussian']
+    #y_B = inference_output_B['categorical']
 
     # Return all outputs, including encoded features and latent variables
     return {
           'output_A': output_A,
           'outputVar_A': outputVar_A,
-          'z_A': z_A,
-          'y_A': y_A,
+          'inference_output_A': inference_output_A,
           'output_B': output_B,
           'outputVar_B': outputVar_B,
-          'z_B': z_B,
-          'y_B': y_B
+          'inference_output_B': inference_output_B
       }
 
 

@@ -27,12 +27,12 @@ class DRIT(nn.Module):
     self.disContent = networks.Dis_content()
 
     # encoders
-    self.enc_c = networks.E_content(opts.input_dim_a, opts.input_dim_b)
+    self.enc_c = networks.E_content(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size)
     if self.concat:
-      self.enc_a = networks.E_attr_concat(opts.input_dim_a, opts.input_dim_b, self.nz, \
+      self.enc_a = networks.E_attr_concat(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, self.nz, \
           norm_layer=None, nl_layer=networks.get_non_linearity(layer_type='lrelu'))
     else:
-      self.enc_a = networks.E_attr(opts.input_dim_a, opts.input_dim_b, self.nz)
+      self.enc_a = networks.E_attr(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, self.nz)
 
     # generator
     if self.concat:
@@ -88,20 +88,28 @@ class DRIT(nn.Module):
     z = torch.randn(batchSize, nz).cuda(self.gpu)
     return z
 
-  def test_forward(self, image, a2b=True):
+  def test_forward(self, image, a2b=True, temperature=1.0, hard=0):
     self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
     if a2b:
-        self.z_content = self.enc_c.forward_a(image)
-        output = self.gen.forward_b(self.z_content, self.z_random)
+        inference_output = self.enc_c.forward_a(image,temperature,hard)
+        self.z_content = inference_output['gaussian']  
+        self.y_content = inference_output['categorical']  
+        output = self.gen.forward_b(self.z_content, self.z_random,self.y_content,temperature,hard) #controlla argomenti
     else:
-        self.z_content = self.enc_c.forward_b(image)
-        output = self.gen.forward_a(self.z_content, self.z_random)
+        inference_output = self.enc_c.forward_b(image,temperature,hard)
+        self.z_content = inference_output['gaussian']  
+        self.y_content = inference_output['categorical']
+        output = self.gen.forward_a(self.z_content, self.z_random,self.y_content,temperature,hard) #controlla argomenti
     return output
 
-  def test_forward_transfer(self, image_a, image_b, a2b=True):
-    self.z_content_a, self.z_content_b = self.enc_c.forward(image_a, image_b)
+  def test_forward_transfer(self, image_a, image_b, a2b=True,temperature=1.0,hard=0):
+    self.inference_output_A, self.inference_output_B = self.enc_c.forward(image_a, image_b,temperature,hard)
+    self.z_content_a = self.inference_output_A['gaussian']  
+    self.y_content_a = self.inference_output_A['categorical']
+    self.z_content_b = self.inference_output_B['gaussian']  
+    self.y_content_b = self.inference_output_B['categorical']
     if self.concat:
-      self.mu_a, self.logvar_a, self.mu_b, self.logvar_b = self.enc_a.forward(image_a, image_b)
+      self.mu_a, self.logvar_a, inference_A, self.mu_b, self.logvar_b, inference_B  = self.enc_a.forward(image_a, image_b,temperature,hard)
       std_a = self.logvar_a.mul(0.5).exp_()
       eps = self.get_z_random(std_a.size(0), std_a.size(1), 'gauss')
       self.z_attr_a = eps.mul(std_a).add_(self.mu_a)
@@ -109,11 +117,11 @@ class DRIT(nn.Module):
       eps = self.get_z_random(std_b.size(0), std_b.size(1), 'gauss')
       self.z_attr_b = eps.mul(std_b).add_(self.mu_b)
     else:
-      self.z_attr_a, self.z_attr_b = self.enc_a.forward(image_a, image_b)
+      self.z_attr_a, self.z_attr_b = self.enc_a.forward(image_a, image_b,temperature,hard)
     if a2b:
-      output = self.gen.forward_b(self.z_content_a, self.z_attr_b)
+      output = self.gen.forward_b(self.z_content_a, self.z_attr_b,self.y_content_a,temperature,hard)
     else:
-      output = self.gen.forward_a(self.z_content_b, self.z_attr_a)
+      output = self.gen.forward_a(self.z_content_b, self.z_attr_a,self.y_content_b,temperature,hard)
     return output
 
   def forward(self):
