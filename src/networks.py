@@ -232,7 +232,7 @@ class E_attr(nn.Module):
     return inference_outputB
 
 class E_attr_concat(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b, output_nc=8, norm_layer=None, nl_layer=None):
+  def __init__(self, input_dim_a, input_dim_b, y_dim, z_dim, output_nc=8, norm_layer=None, nl_layer=None):
     super(E_attr_concat, self).__init__()
 
     ndf = 64
@@ -260,31 +260,64 @@ class E_attr_concat(nn.Module):
     self.fc_B = nn.Sequential(*[nn.Linear(output_ndf, output_nc)])
     self.fcVar_B = nn.Sequential(*[nn.Linear(output_ndf, output_nc)])
     self.conv_B = nn.Sequential(*conv_layers_B)
+    
+    # Inference network for latent variables z and y
+    self.inference_net = GMVAE.InferenceNet(x_dim=output_nc, z_dim=z_dim, y_dim=y_dim)
 
-  def forward(self, xa, xb):
+  def forward(self, xa, xb,temperature=1.0, hard=0):
     x_conv_A = self.conv_A(xa)
     conv_flat_A = x_conv_A.view(xa.size(0), -1)
     output_A = self.fc_A(conv_flat_A)
     outputVar_A = self.fcVar_A(conv_flat_A)
+    
     x_conv_B = self.conv_B(xb)
     conv_flat_B = x_conv_B.view(xb.size(0), -1)
     output_B = self.fc_B(conv_flat_B)
     outputVar_B = self.fcVar_B(conv_flat_B)
-    return output_A, outputVar_A, output_B, outputVar_B
+    
+    
+    # Use output_A and outputVar_A as input for InferenceNet to get latent variables for domain A
+    inference_output_A = self.inference_net(output_A, temperature, hard)
+    z_A = inference_output_A['gaussian']
+    y_A = inference_output_A['categorical']
 
-  def forward_a(self, xa):
+    # Use output_B and outputVar_B as input for InferenceNet to get latent variables for domain B
+    inference_output_B = self.inference_net(output_B, temperature, hard)
+    z_B = inference_output_B['gaussian']
+    y_B = inference_output_B['categorical']
+
+    # Return all outputs, including encoded features and latent variables
+    return {
+          'output_A': output_A,
+          'outputVar_A': outputVar_A,
+          'z_A': z_A,
+          'y_A': y_A,
+          'output_B': output_B,
+          'outputVar_B': outputVar_B,
+          'z_B': z_B,
+          'y_B': y_B
+      }
+
+
+  def forward_a(self, xa, temperature=1.0, hard=0):
     x_conv_A = self.conv_A(xa)
     conv_flat_A = x_conv_A.view(xa.size(0), -1)
     output_A = self.fc_A(conv_flat_A)
     outputVar_A = self.fcVar_A(conv_flat_A)
-    return output_A, outputVar_A
+    inference_output_A = self.inference_net(output_A, temperature, hard)
+    z_A = inference_output_A['gaussian']
+    y_A = inference_output_A['categorical']
+    return output_A, outputVar_A, z_A, y_A
 
-  def forward_b(self, xb):
+  def forward_b(self, xb, temperature=1.0, hard=0):
     x_conv_B = self.conv_B(xb)
     conv_flat_B = x_conv_B.view(xb.size(0), -1)
     output_B = self.fc_B(conv_flat_B)
     outputVar_B = self.fcVar_B(conv_flat_B)
-    return output_B, outputVar_B
+    inference_output_B = self.inference_net(output_B, temperature, hard)
+    z_B = inference_output_B['gaussian']
+    y_B = inference_output_B['categorical']
+    return output_B, outputVar_B, z_B, y_B
 
 ####################################################################
 #--------------------------- Generators ----------------------------
