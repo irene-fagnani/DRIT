@@ -143,3 +143,49 @@ class InferenceNet(nn.Module):
 # la rete usa il metodo qyx  inferire la variabile latente discreta y data l'immagine di input x. Questo viene fatto approssimando la distribuzione categoriale con Gumbel-Softmax.
 # La rete usa il metodo qzxy per inferire la variabile latente continua z data l'immagine x e la variabile latente discreta y.
 # in output restituisce la media mu, la varianza var e il campione z della variabile latente continua z, i logit, la probabilità e il campione y della variabile latente discreta y.
+
+# Generative Network
+class GenerativeNet(nn.Module):
+  def __init__(self, x_dim, z_dim, y_dim):
+    super(GenerativeNet, self).__init__()
+
+    # p(z|y)
+    self.y_mu = nn.Linear(y_dim, z_dim)
+    self.y_var = nn.Linear(y_dim, z_dim)
+
+    # p(x|z) genera x dato z
+    self.generative_pxz = torch.nn.ModuleList([
+        nn.Linear(z_dim, 512),
+        nn.ReLU(),
+        nn.Linear(512, 512),
+        nn.ReLU(),
+        nn.Linear(512, x_dim),
+        torch.nn.Sigmoid() # garantisce che l'output sia compreso tra 0 e 1
+    ])
+
+  # p(z|y)
+  def pzy(self, y):
+    y_mu = self.y_mu(y)
+    y_var = F.softplus(self.y_var(y)) # garantisce che la varianza sia sempre positiva
+    return y_mu, y_var
+
+  # p(x|z)
+  def pxz(self, z):
+    for layer in self.generative_pxz:
+      z = layer(z)
+    return z
+
+  def forward(self, z, y):
+    # p(z|y)
+    y_mu, y_var = self.pzy(y)
+
+    # p(x|z)
+    x_rec = self.pxz(z)
+
+    output = {'y_mean': y_mu, 'y_var': y_var, 'x_rec': x_rec}
+    return output
+  
+  # in input la classe prende una variabile latente z e una variabile categorica y
+  # la rete usa il metodo pzy per calcolare la media e la varianza della distribuzione gaussiana di z data y
+  # e il metodo pxz per generare l'immagine x dato il campione z
+  # in output la rete restituisce la media e la varianza delle variabili latenti y e l'immagine generata x
