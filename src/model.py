@@ -135,7 +135,11 @@ class DRIT(nn.Module):
     self.real_B_random = real_B[half_size:]
 
     # get encoded z_c
-    self.z_content_a, self.z_content_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded)
+    self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
+    self.z_content_a = self.inf.A['gaussian']  
+    self.y_content_a = self.inf.A['categorical'] 
+    self.z_content_b = self.inf.B['gaussian']  
+    self.y_content_b = self.inf.B['categorical'] 
 
     # get encoded z_a
     if self.concat:
@@ -156,7 +160,7 @@ class DRIT(nn.Module):
 
     # first cross translation
     if not self.no_ms:
-      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0)
+      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) # Gaurda qui 
       input_content_forB = torch.cat((self.z_content_a, self.z_content_b, self.z_content_a, self.z_content_a),0)
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random, self.z_random2),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random, self.z_random2),0)
@@ -175,7 +179,11 @@ class DRIT(nn.Module):
       self.fake_B_encoded, self.fake_BB_encoded, self.fake_B_random = torch.split(output_fakeB, self.z_content_a.size(0), dim=0)
 
     # get reconstructed encoded z_c
-    self.z_content_recon_b, self.z_content_recon_a = self.enc_c.forward(self.fake_A_encoded, self.fake_B_encoded)
+    self.inf.B, self.inf.A = self.enc_c.forward(self.fake_A_encoded, self.fake_B_encoded,temperature=1.0, hard=0)
+    self.z_content_recon_a = self.inf.A['gaussian']  
+    self.y_content_recon_a = self.inf.A['categorical'] 
+    self.z_content_recon_b = self.inf.B['gaussian']  
+    self.y_content_recon_b = self.inf.B['categorical'] 
 
     # get reconstructed encoded z_a
     if self.concat:
@@ -210,7 +218,7 @@ class DRIT(nn.Module):
     self.real_A_encoded = self.input_A[0:half_size]
     self.real_B_encoded = self.input_B[0:half_size]
     # get encoded z_c
-    self.z_content_a, self.z_content_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded)
+    self.z_content_a, self.z_content_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
 
   def update_D_content(self, image_a, image_b):
     self.input_A = image_a
