@@ -89,17 +89,17 @@ class DRIT(nn.Module):
     return z
 
   def test_forward(self, image, a2b=True, temperature=1.0, hard=0):
-    self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
+   # self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
     if a2b:
         inference_output = self.enc_c.forward_a(image,temperature,hard)
         self.z_content = inference_output['gaussian']  
         self.y_content = inference_output['categorical']  
-        output = self.gen.forward_b(self.z_content, self.z_random,self.y_content,temperature,hard) #controlla argomenti
+        output = self.gen.forward_b(self.z_content,self.y_content) #controlla argomenti
     else:
         inference_output = self.enc_c.forward_b(image,temperature,hard)
         self.z_content = inference_output['gaussian']  
         self.y_content = inference_output['categorical']
-        output = self.gen.forward_a(self.z_content, self.z_random,self.y_content,temperature,hard) #controlla argomenti
+        output = self.gen.forward_a(self.z_content, self.y_content) #controlla argomenti
     return output
 
   def test_forward_transfer(self, image_a, image_b, a2b=True,temperature=1.0,hard=0):
@@ -119,9 +119,9 @@ class DRIT(nn.Module):
     else:
       self.z_attr_a, self.z_attr_b = self.enc_a.forward(image_a, image_b,temperature,hard)
     if a2b:
-      output = self.gen.forward_b(self.z_content_a, self.z_attr_b,self.y_content_a,temperature,hard)
+      output = self.gen.forward_b(self.z_content_a, self.z_attr_b,self.y_content_a
     else:
-      output = self.gen.forward_a(self.z_content_b, self.z_attr_a,self.y_content_b,temperature,hard)
+      output = self.gen.forward_a(self.z_content_b, self.z_attr_a,self.y_content_b)
     return output
 
   def forward(self):
