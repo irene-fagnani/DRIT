@@ -36,9 +36,9 @@ class DRIT(nn.Module):
 
     # generator
     if self.concat:
-      self.gen = networks.G_concat(opts.input_dim_a, opts.input_dim_b, nz=self.nz)
+      self.gen = networks.G_concat(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, nz=self.nz)
     else:
-      self.gen = networks.G(opts.input_dim_a, opts.input_dim_b, nz=self.nz)
+      self.gen = networks.G(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, nz=self.nz)
 
     # optimizers
     self.disA_opt = torch.optim.Adam(self.disA.parameters(), lr=lr, betas=(0.5, 0.999), weight_decay=0.0001)
@@ -88,19 +88,19 @@ class DRIT(nn.Module):
     z = torch.randn(batchSize, nz).cuda(self.gpu)
     return z
 
-  def test_forward(self, image, a2b=True, temperature=1.0, hard=0):
+  def test_forward(self, image, a2b=True, temperature=1.0, hard=0): # test if output are correct (because we have modify generators)
    # self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
     if a2b:
         inference_output = self.enc_c.forward_a(image,temperature,hard)
         self.z_content = inference_output['gaussian']  
         self.y_content = inference_output['categorical']  
-        output = self.gen.forward_b(self.z_content,self.y_content) #controlla argomenti
+        output = self.gen.forward_b(self.z_content,self.y_content)
     else:
         inference_output = self.enc_c.forward_b(image,temperature,hard)
         self.z_content = inference_output['gaussian']  
         self.y_content = inference_output['categorical']
-        output = self.gen.forward_a(self.z_content, self.y_content) #controlla argomenti
-    return output
+        output = self.gen.forward_a(self.z_content, self.y_content)
+    return output["x_rec"]
 
   def test_forward_transfer(self, image_a, image_b, a2b=True,temperature=1.0,hard=0):
     self.inference_output_A, self.inference_output_B = self.enc_c.forward(image_a, image_b,temperature,hard)
@@ -119,9 +119,9 @@ class DRIT(nn.Module):
     else:
       self.z_attr_a, self.z_attr_b = self.enc_a.forward(image_a, image_b,temperature,hard)
     if a2b:
-      output = self.gen.forward_b(self.z_content_a, self.z_attr_b,self.y_content_a
+      output = self.gen.forward_b(self.z_content_a, self.y_content_a)
     else:
-      output = self.gen.forward_a(self.z_content_b, self.z_attr_a,self.y_content_b)
+      output = self.gen.forward_a(self.z_content_b, self.y_content_b)
     return output
 
   def forward(self):
@@ -165,18 +165,22 @@ class DRIT(nn.Module):
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random, self.z_random2),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random, self.z_random2),0)
       output_fakeA = self.gen.forward_a(input_content_forA, input_attr_forA)
+      output_fakeA_img=output_fakeA["x_rec"]
       output_fakeB = self.gen.forward_b(input_content_forB, input_attr_forB)
-      self.fake_A_encoded, self.fake_AA_encoded, self.fake_A_random, self.fake_A_random2 = torch.split(output_fakeA, self.z_content_a.size(0), dim=0)
-      self.fake_B_encoded, self.fake_BB_encoded, self.fake_B_random, self.fake_B_random2 = torch.split(output_fakeB, self.z_content_a.size(0), dim=0)
+      output_fakeB_img=output_fakeB["x_rec"]
+      self.fake_A_encoded, self.fake_AA_encoded, self.fake_A_random, self.fake_A_random2 = torch.split(output_fakeA_img, self.z_content_a.size(0), dim=0)
+      self.fake_B_encoded, self.fake_BB_encoded, self.fake_B_random, self.fake_B_random2 = torch.split(output_fakeB_img, self.z_content_a.size(0), dim=0)
     else:
       input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b),0)
       input_content_forB = torch.cat((self.z_content_a, self.z_content_b, self.z_content_a),0)
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random),0)
       output_fakeA = self.gen.forward_a(input_content_forA, input_attr_forA)
+      output_fakeA_img=output_fakeA["x_rec"]
       output_fakeB = self.gen.forward_b(input_content_forB, input_attr_forB)
-      self.fake_A_encoded, self.fake_AA_encoded, self.fake_A_random = torch.split(output_fakeA, self.z_content_a.size(0), dim=0)
-      self.fake_B_encoded, self.fake_BB_encoded, self.fake_B_random = torch.split(output_fakeB, self.z_content_a.size(0), dim=0)
+      output_fakeB_img=output_fakeB["x_rec"]
+      self.fake_A_encoded, self.fake_AA_encoded, self.fake_A_random = torch.split(output_fakeA_img, self.z_content_a.size(0), dim=0) 
+      self.fake_B_encoded, self.fake_BB_encoded, self.fake_B_random = torch.split(output_fakeB_img, self.z_content_a.size(0), dim=0)
 
     # get reconstructed encoded z_c
     self.inf.B, self.inf.A = self.enc_c.forward(self.fake_A_encoded, self.fake_B_encoded,temperature=1.0, hard=0)
@@ -198,14 +202,15 @@ class DRIT(nn.Module):
       self.z_attr_recon_a, self.z_attr_recon_b = self.enc_a.forward(self.fake_A_encoded, self.fake_B_encoded)
 
     # second cross translation
-    self.fake_A_recon = self.gen.forward_a(self.z_content_recon_a, self.z_attr_recon_a)
+    self.fake_A_recon = self.gen.forward_a(self.z_content_recon_a, self.z_attr_recon_a) 
+    self.fake_A_recon_image=self.fake_A_recon["x_rec"]
     self.fake_B_recon = self.gen.forward_b(self.z_content_recon_b, self.z_attr_recon_b)
-
+    self.fake_B_recon_image=self.fake_B_recon["x_rec"]
     # for display
     self.image_display = torch.cat((self.real_A_encoded[0:1].detach().cpu(), self.fake_B_encoded[0:1].detach().cpu(), \
-                                    self.fake_B_random[0:1].detach().cpu(), self.fake_AA_encoded[0:1].detach().cpu(), self.fake_A_recon[0:1].detach().cpu(), \
+                                    self.fake_B_random[0:1].detach().cpu(), self.fake_AA_encoded[0:1].detach().cpu(), self.fake_A_recon_image[0:1].detach().cpu(), \
                                     self.real_B_encoded[0:1].detach().cpu(), self.fake_A_encoded[0:1].detach().cpu(), \
-                                    self.fake_A_random[0:1].detach().cpu(), self.fake_BB_encoded[0:1].detach().cpu(), self.fake_B_recon[0:1].detach().cpu()), dim=0)
+                                    self.fake_A_random[0:1].detach().cpu(), self.fake_BB_encoded[0:1].detach().cpu(), self.fake_B_recon_image[0:1].detach().cpu()), dim=0)
 
     # for latent regression
     if self.concat:
