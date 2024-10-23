@@ -1,0 +1,35 @@
+raceback (most recent call last):
+  File "/home/davide/Greta/DRIT/src/train.py", line 79, in <module>
+    main()
+  File "/home/davide/Greta/DRIT/src/train.py", line 49, in main
+    model.update_D_content(images_a, images_b)
+  File "/home/davide/Greta/DRIT/src/model.py", line 236, in update_D_content
+    self.forward_content()
+  File "/home/davide/Greta/DRIT/src/model.py", line 226, in forward_content
+    self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/networks.py", line 138, in forward
+    inference_outputA=self.inference_netA(flattened_A, temperature, hard)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 134, in forward
+    logits, prob, y = self.qyx(x, temperature, hard)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 119, in qyx
+    x = layer(x)
+        ^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (1x746496 and 3x512)
