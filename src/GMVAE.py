@@ -110,13 +110,17 @@ class InferenceNet(nn.Module):
 
   # q(y|x)
   def qyx(self, x, temperature, hard):
+    print("Entra in qyx")
     num_layers = len(self.inference_qyx)
     for i, layer in enumerate(self.inference_qyx):
       if i == num_layers - 1:
+        print("entra in if")
         #last layer is gumbel softmax
         x = layer(x, temperature, hard)
       else:
+        print("entra in else")
         x = layer(x)
+    print("Esce da qyx")
     return x
   # funzione per calcolare q(y|x)
 
@@ -129,7 +133,7 @@ class InferenceNet(nn.Module):
 
   def forward(self, x, temperature=1.0, hard=0):
     #x = Flatten(x)
-
+    print("Entra in forward infNet")
     # q(y|x)
     logits, prob, y = self.qyx(x, temperature, hard)
 
@@ -138,6 +142,7 @@ class InferenceNet(nn.Module):
 
     output = {'mean': mu, 'var': var, 'gaussian': z,
               'logits': logits, 'prob_cat': prob, 'categorical': y}
+    print("Esce da forward infNet")
     return output
 # in input prende un immagine x
 # la rete usa il metodo qyx  inferire la variabile latente discreta y data l'immagine di input x. Questo viene fatto approssimando la distribuzione categoriale con Gumbel-Softmax.

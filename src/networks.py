@@ -125,6 +125,7 @@ class E_content(nn.Module):
 
   #def forward(self, xa, xb):
   def forward(self, xa, xb, temperature=1.0, hard=0):
+    print("Entra in forward E_content")
     outputA = self.convA(xa)
     outputB = self.convB(xb)
     outputA = self.conv_share(outputA)
@@ -132,12 +133,15 @@ class E_content(nn.Module):
     
     # flatten the concolutional output, to be compatible with inference net
     flattened_A=outputA.view(outputA.size(0), -1)
+    print("Size of flatten_A: ", flattened_A.size())
     flattened_B=outputB.view(outputB.size(0), -1)
+    print("size of flatten_B ")
+    flattened_B.size()
     
     # get GMVAE parameters
     inference_outputA=self.inference_netA(flattened_A, temperature, hard)
     inference_outputB=self.inference_netB(flattened_B, temperature, hard)
-    
+    print("Esce da rward E_content")
 # return outputA, outputB
     return inference_outputA, inference_outputB
 

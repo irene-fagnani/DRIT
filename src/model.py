@@ -224,6 +224,7 @@ class DRIT(nn.Module):
     self.real_B_encoded = self.input_B[0:half_size]
     # get encoded z_c
     self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
+    print("forward ok")
     self.z_content_a = self.inf.A['gaussian']  
     self.y_content_a = self.inf.A['categorical'] 
     self.z_content_b = self.inf.B['gaussian']  
@@ -234,6 +235,7 @@ class DRIT(nn.Module):
     self.input_A = image_a
     self.input_B = image_b
     self.forward_content()
+    print("forward_content ok")
     self.disContent_opt.zero_grad()
     loss_D_Content = self.backward_contentD(self.z_content_a, self.z_content_b)
     self.disContent_loss = loss_D_Content.item()

@@ -43,12 +43,14 @@ def main():
       # input data
       images_a = images_a.cuda(opts.gpu).detach()
       images_b = images_b.cuda(opts.gpu).detach()
-
+      
       # update model
       if (it + 1) % opts.d_iter != 0 and it < len(train_loader) - 2:
+        print("Entra in if train")
         model.update_D_content(images_a, images_b)
         continue
       else:
+        print("Entra in else train")
         model.update_D(images_a, images_b)
         model.update_EG()
 
