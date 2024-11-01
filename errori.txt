@@ -1,14 +1,59 @@
-raceback (most recent call last):
-  File "/home/davide/Greta/DRIT/src/train.py", line 79, in <module>
+dataroot: ../datasets/summer2winter_yosemite
+decay_temp: 1
+decay_temp_rate: 0.013862944
+dis_norm: None
+dis_scale: 3
+dis_spectral_norm: False
+display_dir: ../logs
+display_freq: 1
+gaussian_size: 64
+gpu: 0
+hard_gumbel: 0
+img_save_freq: 5
+init_temp: 1.0
+input_dim_a: 3
+input_dim_b: 3
+lr_policy: lambda
+min_temp: 0.5
+model_save_freq: 10
+nThreads: 8
+n_ep: 1200
+n_ep_decay: 600
+name: yosemite
+no_display_img: False
+no_flip: False
+no_ms: False
+num_classes: 2
+phase: train
+resize_size: 256
+result_dir: ../results
+resume: None
+
+--- load dataset ---
+A: 1231, B: 962 images
+
+--- load model ---
+start the training at epoch 0
+
+--- train ---
+Entra in if train
+Entra in forward E_content
+Size of flatten_A:  torch.Size([1, 746496])
+size of flatten_B 
+Entra in forward infNet
+Entra in qyx
+entra in else
+Traceback (most recent call last):
+  File "/home/davide/Greta/DRIT/src/train.py", line 81, in <module>
     main()
-  File "/home/davide/Greta/DRIT/src/train.py", line 49, in main
+  File "/home/davide/Greta/DRIT/src/train.py", line 50, in main
     model.update_D_content(images_a, images_b)
   File "/home/davide/Greta/DRIT/src/model.py", line 236, in update_D_content
     self.forward_content()
   File "/home/davide/Greta/DRIT/src/model.py", line 226, in forward_content
     self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/networks.py", line 138, in forward
+  File "/home/davide/Greta/DRIT/src/networks.py", line 142, in forward
     inference_outputA=self.inference_netA(flattened_A, temperature, hard)
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
@@ -17,10 +62,10 @@ raceback (most recent call last):
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
     return forward_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 134, in forward
+  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 138, in forward
     logits, prob, y = self.qyx(x, temperature, hard)
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 119, in qyx
+  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 122, in qyx
     x = layer(x)
         ^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
@@ -33,3 +78,4 @@ raceback (most recent call last):
     return F.linear(input, self.weight, self.bias)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 RuntimeError: mat1 and mat2 shapes cannot be multiplied (1x746496 and 3x512)
+come viene settato x_dim in inferenceNet???
