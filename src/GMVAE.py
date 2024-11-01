@@ -91,6 +91,7 @@ class InferenceNet(nn.Module):
     super(InferenceNet, self).__init__()
     # ci sono due reti neurali: una per q(y|x) e una per q(z|y,x)
     # q(y|x)
+    print("x_dim", x_dim, y_dim,z_dim)
     self.inference_qyx = torch.nn.ModuleList([
         nn.Linear(x_dim, 512),
         nn.ReLU(),
