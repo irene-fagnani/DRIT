@@ -123,7 +123,6 @@ class InferenceNet(nn.Module):
         # print("x:", x)
         # print("x dimension", x.shape)
         print("layer:", layer)
-        print("layer dimension", layer.shape)
         x=layer(x) # dimension of x: torch.Size([1, 746496])
                     # layer is a torch linear object
     print("Esce da qyx")

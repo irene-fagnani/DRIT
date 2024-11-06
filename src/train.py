@@ -42,10 +42,10 @@ def main():
 
       # input data
       # MODIFICA NVIDIA
-      # images_a = images_a.cuda(opts.gpu).detach()
-      # images_b = images_b.cuda(opts.gpu).detach()
-      images_a = images_a.cpu().detach()
-      images_b = images_b.cpu().detach()
+      images_a = images_a.cuda(opts.gpu).detach()
+      images_b = images_b.cuda(opts.gpu).detach()
+      # images_a = images_a.cpu().detach()
+      # images_b = images_b.cpu().detach()
       
       # update model
       if (it + 1) % opts.d_iter != 0 and it < len(train_loader) - 2:

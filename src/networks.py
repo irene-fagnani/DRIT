@@ -21,6 +21,7 @@ class Dis_content(nn.Module):
     self.model = nn.Sequential(*model)
 
   def forward(self, x):
+    print("x", x)
     out = self.model(x)
     out = out.view(-1)
     outs = []
@@ -92,7 +93,7 @@ class Dis(nn.Module):
 #---------------------------- Encoders -----------------------------
 ####################################################################
 class E_content(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b, y_dim, z_dim):
+  def __init__(self,input_dim_a,input_dim_b, x_dim, y_dim, z_dim):
     super(E_content, self).__init__()
     encA_c = []
     tch = 64
@@ -120,27 +121,31 @@ class E_content(nn.Module):
 
     self.convA = nn.Sequential(*encA_c)
     self.convB = nn.Sequential(*encB_c)
-    self.inference_netA=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim) # InverenceNet class: to add from GMVAE
-    self.inference_netB=GMVAE.InferenceNet(input_dim_b, y_dim, z_dim)
+    self.inference_netA=GMVAE.InferenceNet(x_dim, y_dim, z_dim) # InverenceNet class: to add from GMVAE
+    self.inference_netB=GMVAE.InferenceNet(x_dim, y_dim, z_dim)
 
   #def forward(self, xa, xb):
   def forward(self, xa, xb, temperature=1.0, hard=0):
-    print("Entra in forward E_content")
-    outputA = self.convA(xa)
-    outputB = self.convB(xb)
-    outputA = self.conv_share(outputA)
-    outputB = self.conv_share(outputB)
+    # print("ca",xa.size())
+    # print("Entra in forward E_content")
+    # outputA = self.convA(xa)
+    # print("size of outputA1: ", outputA.size())
+    # outputB = self.convB(xb)
+    # outputA = self.conv_share(outputA)
+    # print("size of outputA: ", outputA.size())
+    # outputB = self.conv_share(outputB)
     
     # flatten the concolutional output, to be compatible with inference net
-    flattened_A=outputA.view(outputA.size(0), -1)
+    flattened_A=xa.view(xa.size(0), -1)
     print("Size of flatten_A: ", flattened_A.size())
-    flattened_B=outputB.view(outputB.size(0), -1)
+    flattened_B=xb.view(xb.size(0), -1)
     print("size of flatten_B ", flattened_B.size())
     flattened_B.size()
     
     # get GMVAE parameters
     inference_outputA=self.inference_netA(flattened_A, temperature, hard)
     inference_outputB=self.inference_netB(flattened_B, temperature, hard)
+    print("infernce_outputA: ", inference_outputA)
     print("Esce da rward E_content")
 # return outputA, outputB
     return inference_outputA, inference_outputB
@@ -166,7 +171,7 @@ class E_content(nn.Module):
     return inference_outputB
 
 class E_attr(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b,y_dim, z_dim, output_nc=8):
+  def __init__(self, input_dim_a,input_dim_b, x_dim,y_dim, z_dim, output_nc=8):
     super(E_attr, self).__init__()
     dim = 64
     self.model_a = nn.Sequential(
@@ -206,8 +211,8 @@ class E_attr(nn.Module):
         nn.AdaptiveAvgPool2d(1),
         nn.Conv2d(dim*4, output_nc, 1, 1, 0))
     
-    self.inference_netA=GMVAE.InferenceNet(input_dim_a, y_dim, z_dim) # InverenceNet class: to add from GMVAE
-    self.inference_netB=GMVAE.InferenceNet(input_dim_b, y_dim, z_dim)
+    self.inference_netA=GMVAE.InferenceNet(x_dim, y_dim, z_dim) # InverenceNet class: to add from GMVAE
+    self.inference_netB=GMVAE.InferenceNet(x_dim, y_dim, z_dim)
     return
 
   def forward(self, xa, xb, temperature=1.0, hard=0):
@@ -236,7 +241,7 @@ class E_attr(nn.Module):
     return inference_outputB
 
 class E_attr_concat(nn.Module):
-  def __init__(self, input_dim_a, input_dim_b, y_dim, z_dim, output_nc=8, norm_layer=None, nl_layer=None):
+  def __init__(self,input_dim_a,input_dim_b, x_dim, y_dim, z_dim, output_nc=8, norm_layer=None, nl_layer=None):
     super(E_attr_concat, self).__init__()
 
     ndf = 64
@@ -718,9 +723,9 @@ class GaussianNoiseLayer(nn.Module):
     if self.training == False:
       return x
     # MODIFICA NVIDIA
-    # noise = Variable(torch.randn(x.size()).cuda(x.get_device()))
-    device =x.get_device() if x.is_cuda else 'cpu' # commentra se si usa CUDA
-    noise = Variable(torch.randn(x.size()).to(device)) # commentra se si usa CUDA
+    noise = Variable(torch.randn(x.size()).cuda(x.get_device()))
+    # device =x.get_device() if x.is_cuda else 'cpu' # commentra se si usa CUDA
+    # noise = Variable(torch.randn(x.size()).to(device)) # commentra se si usa CUDA
     return x + noise
 
 class ReLUINSConvTranspose2d(nn.Module):

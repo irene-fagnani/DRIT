@@ -1,3 +1,8 @@
+--- load options ---
+batch_size: 2
+concat: 1
+crop_size: 216
+d_iter: 3
 dataroot: ../datasets/summer2winter_yosemite
 decay_temp: 1
 decay_temp_rate: 0.013862944
@@ -28,63 +33,127 @@ phase: train
 resize_size: 256
 result_dir: ../results
 resume: None
+x_dim: 139968
 
 --- load dataset ---
 A: 1231, B: 962 images
 
 --- load model ---
-x_dim 3
-y_dim 64
-z 2
-x_dim 3
-y_dim 64
-z 2
-x_dim 8
-y_dim 2
-z 64
+x_dim 139968 64 2
+x_dim 139968 64 2
+x_dim 8 2 64
 start the training at epoch 0
 
 --- train ---
 Entra in if train
-Entra in forward E_content
-Size of flatten_A:  torch.Size([1, 746496])
-size of flatten_B 
+Size of flatten_A:  torch.Size([1, 139968])
+size of flatten_B  torch.Size([1, 139968])
 Entra in forward infNet
 Entra in qyx
 entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+infernce_outputA:  {'mean': tensor([[ 0.0318, -0.0851]], device='cuda:0', grad_fn=<AddmmBackward0>), 'var': tensor([[0.6819, 0.6702]], device='cuda:0', grad_fn=<SoftplusBackward0>), 'gaussian': tensor([[-0.9104,  0.8933]], device='cuda:0', grad_fn=<AddBackward0>), 'logits': tensor([[-0.0033, -0.0021, -0.0120, -0.0604,  0.0135, -0.0324,  0.0573,  0.0092,
+          0.0796, -0.0050, -0.0341,  0.0852,  0.0302,  0.0500,  0.0024, -0.0791,
+         -0.0904, -0.0987,  0.0029,  0.0863,  0.0270,  0.0460,  0.0561, -0.0198,
+         -0.1746,  0.0287, -0.0030, -0.0157, -0.0426,  0.0443,  0.0444, -0.0646,
+         -0.0254, -0.0473,  0.0382, -0.0184, -0.0103, -0.1352, -0.0153,  0.0090,
+          0.0951, -0.0506, -0.0312, -0.1867,  0.0669,  0.0941, -0.0606, -0.0127,
+          0.0008, -0.0452,  0.0122, -0.0051, -0.0513, -0.0027,  0.0279, -0.0938,
+          0.0237,  0.1069, -0.1188, -0.0127, -0.0798, -0.0039, -0.0251, -0.0291]],
+       device='cuda:0', grad_fn=<ViewBackward0>), 'prob_cat': tensor([[0.0157, 0.0157, 0.0156, 0.0148, 0.0160, 0.0153, 0.0167, 0.0159, 0.0171,
+         0.0157, 0.0152, 0.0172, 0.0162, 0.0166, 0.0158, 0.0146, 0.0144, 0.0143,
+         0.0158, 0.0172, 0.0162, 0.0165, 0.0167, 0.0154, 0.0132, 0.0162, 0.0157,
+         0.0155, 0.0151, 0.0165, 0.0165, 0.0148, 0.0154, 0.0150, 0.0164, 0.0155,
+         0.0156, 0.0138, 0.0155, 0.0159, 0.0173, 0.0150, 0.0153, 0.0131, 0.0168,
+         0.0173, 0.0148, 0.0156, 0.0158, 0.0151, 0.0160, 0.0157, 0.0150, 0.0157,
+         0.0162, 0.0143, 0.0161, 0.0175, 0.0140, 0.0156, 0.0146, 0.0157, 0.0154,
+         0.0153]], device='cuda:0', grad_fn=<SoftmaxBackward0>), 'categorical': tensor([[0.2529, 0.0062, 0.0454, 0.0127, 0.0073, 0.0010, 0.0018, 0.0073, 0.0020,
+         0.0049, 0.0049, 0.0018, 0.0019, 0.0020, 0.0042, 0.0003, 0.0024, 0.0020,
+         0.0016, 0.0028, 0.0028, 0.0017, 0.0023, 0.0039, 0.0125, 0.0050, 0.0161,
+         0.0010, 0.0019, 0.0054, 0.0019, 0.0052, 0.0174, 0.1273, 0.0119, 0.0006,
+         0.0594, 0.0061, 0.0007, 0.0056, 0.0077, 0.0028, 0.0013, 0.0053, 0.0140,
+         0.0063, 0.0014, 0.0079, 0.0177, 0.0019, 0.0047, 0.1375, 0.0018, 0.0029,
+         0.0014, 0.0007, 0.0068, 0.0034, 0.0141, 0.0031, 0.0023, 0.0125, 0.0020,
+         0.0867]], device='cuda:0', grad_fn=<SoftmaxBackward0>)}
+Esce da rward E_content
+forward ok
+forward_content ok
+imageA tensor([[-0.9104,  0.8933]], device='cuda:0', grad_fn=<AddBackward0>)
+imageB tensor([[-0.1154, -0.4106]], device='cuda:0', grad_fn=<AddBackward0>)
+x tensor([[-0.9104,  0.8933]], device='cuda:0')
 Traceback (most recent call last):
-  File "/home/davide/Greta/DRIT/src/train.py", line 81, in <module>
+  File "/home/davide/Greta/DRIT/src/train.py", line 84, in <module>
     main()
-  File "/home/davide/Greta/DRIT/src/train.py", line 50, in main
+  File "/home/davide/Greta/DRIT/src/train.py", line 53, in main
     model.update_D_content(images_a, images_b)
-  File "/home/davide/Greta/DRIT/src/model.py", line 236, in update_D_content
-    self.forward_content()
-  File "/home/davide/Greta/DRIT/src/model.py", line 226, in forward_content
-    self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/networks.py", line 142, in forward
-    inference_outputA=self.inference_netA(flattened_A, temperature, hard)
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/model.py", line 253, in update_D_content
+    loss_D_Content = self.backward_contentD(self.z_content_a, self.z_content_b)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/model.py", line 321, in backward_contentD
+    pred_fake = self.disContent.forward(imageA.detach())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/src/networks.py", line 25, in forward
+    out = self.model(x)
+          ^^^^^^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
     return self._call_impl(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
     return forward_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 138, in forward
-    logits, prob, y = self.qyx(x, temperature, hard)
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/GMVAE.py", line 122, in qyx
-    x = layer(x)
-        ^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
     return self._call_impl(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
     return forward_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
-    return F.linear(input, self.weight, self.bias)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: mat1 and mat2 shapes cannot be multiplied (1x746496 and 3x512)
-come viene settato x_dim in inferenceNet???
+  File "/home/davide/Greta/DRIT/src/networks.py", line 641, in forward
+    return self.model(x)
+           ^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/padding.py", line 368, in forward
+    return F.pad(input, self.padding, "reflect")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/functional.py", line 5096, in pad
+    return torch._C._nn.pad(input, pad, mode, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NotImplementedError: Only 2D, 3D, 4D, 5D padding with non-constant padding are supported for now

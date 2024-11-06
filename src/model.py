@@ -1,7 +1,7 @@
 import networks
 import torch
 import torch.nn as nn
-
+import GMVAE
 class DRIT(nn.Module):
   def __init__(self, opts):
     super(DRIT, self).__init__()
@@ -12,6 +12,8 @@ class DRIT(nn.Module):
     self.nz = 8
     self.concat = opts.concat
     self.no_ms = opts.no_ms
+    self.inf_a= dict()
+    self.inf_b= dict()
 
     # discriminators
     if opts.dis_scale > 1:
@@ -27,12 +29,12 @@ class DRIT(nn.Module):
     self.disContent = networks.Dis_content()
 
     # encoders
-    self.enc_c = networks.E_content(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size)
+    self.enc_c = networks.E_content(opts.input_dim_a,opts.input_dim_b,opts.x_dim, opts.num_classes,opts.gaussian_size)
     if self.concat:
-      self.enc_a = networks.E_attr_concat(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, self.nz, \
+      self.enc_a = networks.E_attr_concat(opts.input_dim_a,opts.input_dim_b,opts.x_dim,opts.num_classes,opts.gaussian_size, self.nz, \
           norm_layer=None, nl_layer=networks.get_non_linearity(layer_type='lrelu'))
     else:
-      self.enc_a = networks.E_attr(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, self.nz)
+      self.enc_a = networks.E_attr(opts.input_dim_a,opts.input_dim_b,opts.x_dim,opts.num_classes,opts.gaussian_size, self.nz)
 
     # generator
     if self.concat:
@@ -74,29 +76,29 @@ class DRIT(nn.Module):
     self.gen_sch = networks.get_scheduler(self.gen_opt, opts, last_ep)
 
   def setgpu(self, gpu):
-    self.gpu = gpu
+   self.gpu = gpu
    # MODIFICA NVIDIA
-   # self.disA.cuda(self.gpu)
-   # self.disB.cuda(self.gpu)
-   # self.disA2.cuda(self.gpu)
-   # self.disB2.cuda(self.gpu)
-   # self.disContent.cuda(self.gpu)
-   # self.enc_c.cuda(self.gpu)
-   # self.enc_a.cuda(self.gpu)
-   # self.gen.cuda(self.gpu)
-    self.disA.cpu()
-    self.disB.cpu()
-    self.disA2.cpu()
-    self.disB2.cpu()
-    self.disContent.cpu()
-    self.enc_c.cpu()
-    self.enc_a.cpu()
-    self.gen.cpu()
+   self.disA.cuda(self.gpu)
+   self.disB.cuda(self.gpu)
+   self.disA2.cuda(self.gpu)
+   self.disB2.cuda(self.gpu)
+   self.disContent.cuda(self.gpu)
+   self.enc_c.cuda(self.gpu)
+   self.enc_a.cuda(self.gpu)
+   self.gen.cuda(self.gpu)
+    # self.disA.cpu()
+    # self.disB.cpu()
+    # self.disA2.cpu()
+    # self.disB2.cpu()
+    # self.disContent.cpu()
+    # self.enc_c.cpu()
+    # self.enc_a.cpu()
+    # self.gen.cpu()
 
   def get_z_random(self, batchSize, nz, random_type='gauss'):
     # MODIFICA NVIDIA 
-    #z = torch.randn(batchSize, nz).cuda(self.gpu)
-    z = torch.randn(batchSize, nz).cpu(self.gpu)
+    z = torch.randn(batchSize, nz).cuda(self.gpu)
+    #z = torch.randn(batchSize, nz).cpu(self.gpu)
     return z
 
   def test_forward(self, image, a2b=True, temperature=1.0, hard=0): # test if output are correct (because we have modify generators)
@@ -234,12 +236,12 @@ class DRIT(nn.Module):
     self.real_A_encoded = self.input_A[0:half_size]
     self.real_B_encoded = self.input_B[0:half_size]
     # get encoded z_c
-    self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
+    self.inf_a, self.inf_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
     print("forward ok")
-    self.z_content_a = self.inf.A['gaussian']  
-    self.y_content_a = self.inf.A['categorical'] 
-    self.z_content_b = self.inf.B['gaussian']  
-    self.y_content_b = self.inf.B['categorical'] 
+    self.z_content_a = self.inf_a['gaussian']  
+    self.y_content_a = self.inf_a['categorical'] 
+    self.z_content_b = self.inf_b['gaussian']  
+    self.y_content_b = self.inf_b['categorical'] 
 
 
   def update_D_content(self, image_a, image_b):
@@ -303,10 +305,10 @@ class DRIT(nn.Module):
       out_fake = nn.functional.sigmoid(out_a)
       out_real = nn.functional.sigmoid(out_b)
       # MODIFICA NVIDIA
-      #all0 = torch.zeros_like(out_fake).cuda(self.gpu)
-      #all1 = torch.ones_like(out_real).cuda(self.gpu)
-      all0 = torch.zeros_like(out_fake).cpu(self.gpu)
-      all1 = torch.ones_like(out_real).cpu(self.gpu)
+      all0 = torch.zeros_like(out_fake).cuda(self.gpu)
+      all1 = torch.ones_like(out_real).cuda(self.gpu)
+      # all0 = torch.zeros_like(out_fake).cpu(self.gpu)
+      # all1 = torch.ones_like(out_real).cpu(self.gpu)
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1)
       loss_D += ad_true_loss + ad_fake_loss
@@ -314,16 +316,18 @@ class DRIT(nn.Module):
     return loss_D
 
   def backward_contentD(self, imageA, imageB): # z_content_a, z_content_b
+    print("imageA",imageA)
+    print("imageB",imageB)
     pred_fake = self.disContent.forward(imageA.detach())
     pred_real = self.disContent.forward(imageB.detach())
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
       out_fake = nn.functional.sigmoid(out_a)
       out_real = nn.functional.sigmoid(out_b)
       # MODIFICA NVIDIA
-      #all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
-      #all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
-      all1 = torch.ones((out_real.size(0))).cpu(self.gpu)
-      all0 = torch.zeros((out_fake.size(0))).cpu(self.gpu)
+      all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
+      all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
+      # all1 = torch.ones((out_real.size(0))).cpu(self.gpu)
+      # all0 = torch.zeros((out_fake.size(0))).cpu(self.gpu)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1) # classificare le immagini reali come "vere"
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0) # classificare le immagini fake come "false"
     loss_D = ad_true_loss + ad_fake_loss
