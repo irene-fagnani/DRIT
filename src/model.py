@@ -75,21 +75,32 @@ class DRIT(nn.Module):
 
   def setgpu(self, gpu):
     self.gpu = gpu
-    self.disA.cuda(self.gpu)
-    self.disB.cuda(self.gpu)
-    self.disA2.cuda(self.gpu)
-    self.disB2.cuda(self.gpu)
-    self.disContent.cuda(self.gpu)
-    self.enc_c.cuda(self.gpu)
-    self.enc_a.cuda(self.gpu)
-    self.gen.cuda(self.gpu)
+   # MODIFICA NVIDIA
+   # self.disA.cuda(self.gpu)
+   # self.disB.cuda(self.gpu)
+   # self.disA2.cuda(self.gpu)
+   # self.disB2.cuda(self.gpu)
+   # self.disContent.cuda(self.gpu)
+   # self.enc_c.cuda(self.gpu)
+   # self.enc_a.cuda(self.gpu)
+   # self.gen.cuda(self.gpu)
+    self.disA.cpu()
+    self.disB.cpu()
+    self.disA2.cpu()
+    self.disB2.cpu()
+    self.disContent.cpu()
+    self.enc_c.cpu()
+    self.enc_a.cpu()
+    self.gen.cpu()
 
   def get_z_random(self, batchSize, nz, random_type='gauss'):
-    z = torch.randn(batchSize, nz).cuda(self.gpu)
+    # MODIFICA NVIDIA 
+    #z = torch.randn(batchSize, nz).cuda(self.gpu)
+    z = torch.randn(batchSize, nz).cpu(self.gpu)
     return z
 
   def test_forward(self, image, a2b=True, temperature=1.0, hard=0): # test if output are correct (because we have modify generators)
-   # self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
+    self.z_random = self.get_z_random(image.size(0), self.nz, 'gauss')
     if a2b:
         inference_output = self.enc_c.forward_a(image,temperature,hard)
         self.z_content = inference_output['gaussian']  
@@ -291,8 +302,11 @@ class DRIT(nn.Module):
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
       out_fake = nn.functional.sigmoid(out_a)
       out_real = nn.functional.sigmoid(out_b)
-      all0 = torch.zeros_like(out_fake).cuda(self.gpu)
-      all1 = torch.ones_like(out_real).cuda(self.gpu)
+      # MODIFICA NVIDIA
+      #all0 = torch.zeros_like(out_fake).cuda(self.gpu)
+      #all1 = torch.ones_like(out_real).cuda(self.gpu)
+      all0 = torch.zeros_like(out_fake).cpu(self.gpu)
+      all1 = torch.ones_like(out_real).cpu(self.gpu)
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1)
       loss_D += ad_true_loss + ad_fake_loss
@@ -305,8 +319,11 @@ class DRIT(nn.Module):
     for it, (out_a, out_b) in enumerate(zip(pred_fake, pred_real)):
       out_fake = nn.functional.sigmoid(out_a)
       out_real = nn.functional.sigmoid(out_b)
-      all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
-      all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
+      # MODIFICA NVIDIA
+      #all1 = torch.ones((out_real.size(0))).cuda(self.gpu)
+      #all0 = torch.zeros((out_fake.size(0))).cuda(self.gpu)
+      all1 = torch.ones((out_real.size(0))).cpu(self.gpu)
+      all0 = torch.zeros((out_fake.size(0))).cpu(self.gpu)
       ad_true_loss = nn.functional.binary_cross_entropy(out_real, all1) # classificare le immagini reali come "vere"
       ad_fake_loss = nn.functional.binary_cross_entropy(out_fake, all0) # classificare le immagini fake come "false"
     loss_D = ad_true_loss + ad_fake_loss
@@ -386,7 +403,8 @@ class DRIT(nn.Module):
     outs = self.disContent.forward(data)
     for out in outs:
       outputs_fake = nn.functional.sigmoid(out)
-      all_half = 0.5*torch.ones((outputs_fake.size(0))).cuda(self.gpu)
+      #all_half = 0.5*torch.ones((outputs_fake.size(0))).cuda(self.gpu)
+      all_half = 0.5*torch.ones((outputs_fake.size(0))).cpu(self.gpu)
       ad_loss = nn.functional.binary_cross_entropy(outputs_fake, all_half)
     return ad_loss
 
@@ -395,7 +413,8 @@ class DRIT(nn.Module):
     loss_G = 0
     for out_a in outs_fake:
       outputs_fake = nn.functional.sigmoid(out_a)
-      all_ones = torch.ones_like(outputs_fake).cuda(self.gpu)
+      #all_ones = torch.ones_like(outputs_fake).cuda(self.gpu)
+      all_ones = torch.ones_like(outputs_fake).cpu(self.gpu)
       loss_G += nn.functional.binary_cross_entropy(outputs_fake, all_ones)
     return loss_G
 

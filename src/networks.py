@@ -128,16 +128,14 @@ class E_content(nn.Module):
     print("Entra in forward E_content")
     outputA = self.convA(xa)
     outputB = self.convB(xb)
-    print("dim outputA", outputA.size())
     outputA = self.conv_share(outputA)
     outputB = self.conv_share(outputB)
     
-
     # flatten the concolutional output, to be compatible with inference net
     flattened_A=outputA.view(outputA.size(0), -1)
     print("Size of flatten_A: ", flattened_A.size())
     flattened_B=outputB.view(outputB.size(0), -1)
-    print("size of flatten_B ")
+    print("size of flatten_B ", flattened_B.size())
     flattened_B.size()
     
     # get GMVAE parameters
@@ -719,7 +717,10 @@ class GaussianNoiseLayer(nn.Module):
   def forward(self, x):
     if self.training == False:
       return x
-    noise = Variable(torch.randn(x.size()).cuda(x.get_device()))
+    # MODIFICA NVIDIA
+    # noise = Variable(torch.randn(x.size()).cuda(x.get_device()))
+    device =x.get_device() if x.is_cuda else 'cpu' # commentra se si usa CUDA
+    noise = Variable(torch.randn(x.size()).to(device)) # commentra se si usa CUDA
     return x + noise
 
 class ReLUINSConvTranspose2d(nn.Module):
@@ -811,4 +812,3 @@ def remove_spectral_norm(module, name='weight'):
       del module._forward_pre_hooks[k]
       return module
   raise ValueError("spectral_norm of '{}' not found in {}".format(name, module))
-

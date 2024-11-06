@@ -120,7 +120,12 @@ class InferenceNet(nn.Module):
         x = layer(x, temperature, hard)
       else:
         print("entra in else")
-        x = layer(x)
+        # print("x:", x)
+        # print("x dimension", x.shape)
+        print("layer:", layer)
+        print("layer dimension", layer.shape)
+        #x=layer(x) # dimension of x: torch.Size([1, 746496])
+                    # layer is a torch linear object
     print("Esce da qyx")
     return x
   # funzione per calcolare q(y|x)
