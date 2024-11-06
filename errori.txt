@@ -33,6 +33,15 @@ resume: None
 A: 1231, B: 962 images
 
 --- load model ---
+x_dim 3
+y_dim 64
+z 2
+x_dim 3
+y_dim 64
+z 2
+x_dim 8
+y_dim 2
+z 64
 start the training at epoch 0
 
 --- train ---
