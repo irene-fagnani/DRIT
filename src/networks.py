@@ -128,9 +128,11 @@ class E_content(nn.Module):
     print("Entra in forward E_content")
     outputA = self.convA(xa)
     outputB = self.convB(xb)
+    print("dim outputA", outputA.size())
     outputA = self.conv_share(outputA)
     outputB = self.conv_share(outputB)
     
+
     # flatten the concolutional output, to be compatible with inference net
     flattened_A=outputA.view(outputA.size(0), -1)
     print("Size of flatten_A: ", flattened_A.size())
