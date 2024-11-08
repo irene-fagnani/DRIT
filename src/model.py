@@ -173,7 +173,7 @@ class DRIT(nn.Module):
 
     # first cross translation
     if not self.no_ms:
-      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) # Gaurda qui 
+      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) # Gaurda qui: z_content e z_attr sono le nostre z e y
       input_content_forB = torch.cat((self.z_content_a, self.z_content_b, self.z_content_a, self.z_content_a),0)
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random, self.z_random2),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random, self.z_random2),0)
