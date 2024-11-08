@@ -239,7 +239,7 @@ class DRIT(nn.Module):
     self.inf_a, self.inf_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
     print("forward ok")
     self.z_content_a = self.inf_a['gaussian']  
-    self.y_content_a = self.inf_a['catexgorical'] 
+    self.y_content_a = self.inf_a['categorical'] 
     self.z_content_b = self.inf_b['gaussian']  
     self.y_content_b = self.inf_b['categorical'] 
 
