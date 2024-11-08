@@ -38,9 +38,9 @@ class DRIT(nn.Module):
 
     # generator
     if self.concat:
-      self.gen = networks.G_concat(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, nz=self.nz)
+      self.gen = networks.G_concat(opts.input_dim_a, opts.input_dim_b,opts.x_dim,opts.num_classes,opts.gaussian_size, nz=self.nz)
     else:
-      self.gen = networks.G(opts.input_dim_a, opts.input_dim_b,opts.num_classes,opts.gaussian_size, nz=self.nz)
+      self.gen = networks.G(opts.input_dim_a, opts.input_dim_b,opts.x_dim,opts.num_classes,opts.gaussian_size, nz=self.nz)
 
     # optimizers
     self.disA_opt = torch.optim.Adam(self.disA.parameters(), lr=lr, betas=(0.5, 0.999), weight_decay=0.0001)
@@ -239,7 +239,7 @@ class DRIT(nn.Module):
     self.inf_a, self.inf_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
     print("forward ok")
     self.z_content_a = self.inf_a['gaussian']  
-    self.y_content_a = self.inf_a['categorical'] 
+    self.y_content_a = self.inf_a['catexgorical'] 
     self.z_content_b = self.inf_b['gaussian']  
     self.y_content_b = self.inf_b['categorical'] 
 

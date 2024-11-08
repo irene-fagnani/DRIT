@@ -330,7 +330,7 @@ class E_attr_concat(nn.Module):
 #--------------------------- Generators ----------------------------
 ####################################################################
 class G(nn.Module):
-  def __init__(self, output_dim_a, output_dim_b, y_dim, z_dim, nz):
+  def __init__(self, output_dim_a, output_dim_b, x_dim,y_dim, z_dim, nz):
     super(G, self).__init__()
     self.nz = nz
     ini_tch = 256
@@ -380,8 +380,8 @@ class G(nn.Module):
     
     
  # Integrazione del GenerativeNet
-    self.generative_net_a = GMVAE.GenerativeNet(output_dim_a, z_dim, y_dim)
-    self.generative_net_b = GMVAE.GenerativeNet(output_dim_b, z_dim, y_dim)
+    self.generative_net_a = GMVAE.GenerativeNet( x_dim, z_dim, y_dim)
+    self.generative_net_b = GMVAE.GenerativeNet( x_dim, z_dim, y_dim)
   
     return
 
@@ -432,7 +432,7 @@ class G(nn.Module):
       return out
     
 class G_concat(nn.Module):
-  def __init__(self, output_dim_a, output_dim_b, y_dim, z_dim, nz):
+  def __init__(self, output_dim_a, output_dim_b, x_dim, y_dim, z_dim, nz):
     super(G_concat, self).__init__()
     self.nz = nz
     tch = 256
@@ -473,8 +473,8 @@ class G_concat(nn.Module):
     self.decB3 = nn.Sequential(*[decB3])
     self.decB4 = nn.Sequential(*decB4)
     
-    self.generative_net_a = GMVAE.GenerativeNet(output_dim_a, z_dim, y_dim)
-    self.generative_net_b = GMVAE.GenerativeNet(output_dim_b, z_dim, y_dim)
+    self.generative_net_a = GMVAE.GenerativeNet(x_dim, z_dim, y_dim)
+    self.generative_net_b = GMVAE.GenerativeNet(x_dim, z_dim, y_dim)
   
   
   def sample_z_a(self, y):
