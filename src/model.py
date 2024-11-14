@@ -9,7 +9,7 @@ class DRIT(nn.Module):
     # parameters
     lr = 0.0001
     lr_dcontent = lr / 2.5
-    self.nz = 8
+    self.nz = 64 #8
     self.concat = opts.concat
     self.no_ms = opts.no_ms
     self.inf_a= dict()
@@ -156,7 +156,11 @@ class DRIT(nn.Module):
 
     # get encoded z_a
     if self.concat:
-      self.mu_a, self.logvar_a, self.mu_b, self.logvar_b = self.enc_a.forward(self.real_A_encoded, self.real_B_encoded)
+      output= self.enc_a.forward(self.real_A_encoded, self.real_B_encoded)
+      self.mu_a = output['inference_output_A']['mean']
+      self.logvar_a = torch.log(output['inference_output_A']['var'])
+      self.mu_b = output['inference_output_B']['mean']
+      self.logvar_b = torch.log(output['inference_output_B']['var'])
       std_a = self.logvar_a.mul(0.5).exp_()
       eps_a = self.get_z_random(std_a.size(0), std_a.size(1), 'gauss')
       self.z_attr_a = eps_a.mul(std_a).add_(self.mu_a)
@@ -175,6 +179,10 @@ class DRIT(nn.Module):
     if not self.no_ms:
       input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) # Gaurda qui: z_content e z_attr sono le nostre z e y
       input_content_forB = torch.cat((self.z_content_a, self.z_content_b, self.z_content_a, self.z_content_a),0)
+      print("Dimensione di z_attr_a:", self.z_attr_a.size())
+      print("Dimensione di z_random:", self.z_random.size())
+      print("Dimensione di z_random2:", self.z_random2.size())
+
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random, self.z_random2),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random, self.z_random2),0)
       output_fakeA = self.gen.forward_a(input_content_forA, input_attr_forA)
