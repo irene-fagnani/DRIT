@@ -148,11 +148,11 @@ class DRIT(nn.Module):
     self.real_B_random = real_B[half_size:]
 
     # get encoded z_c
-    self.inf.A, self.inf.B = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
-    self.z_content_a = self.inf.A['gaussian']  
-    self.y_content_a = self.inf.A['categorical'] 
-    self.z_content_b = self.inf.B['gaussian']  
-    self.y_content_b = self.inf.B['categorical'] 
+    self.inf_a, self.inf_b = self.enc_c.forward(self.real_A_encoded, self.real_B_encoded,temperature=1.0, hard=0)
+    self.z_content_a = self.inf_a['gaussian']  
+    self.y_content_a = self.inf_a['categorical'] 
+    self.z_content_b = self.inf_b['gaussian']  
+    self.y_content_b = self.inf_b['categorical'] 
 
     # get encoded z_a
     if self.concat:

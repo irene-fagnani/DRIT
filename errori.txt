@@ -74,86 +74,195 @@ layer: ReLU()
 entra in if
 Esce da qyx
 Esce da forward infNet
-infernce_outputA:  {'mean': tensor([[ 0.0318, -0.0851]], device='cuda:0', grad_fn=<AddmmBackward0>), 'var': tensor([[0.6819, 0.6702]], device='cuda:0', grad_fn=<SoftplusBackward0>), 'gaussian': tensor([[-0.9104,  0.8933]], device='cuda:0', grad_fn=<AddBackward0>), 'logits': tensor([[-0.0033, -0.0021, -0.0120, -0.0604,  0.0135, -0.0324,  0.0573,  0.0092,
-          0.0796, -0.0050, -0.0341,  0.0852,  0.0302,  0.0500,  0.0024, -0.0791,
-         -0.0904, -0.0987,  0.0029,  0.0863,  0.0270,  0.0460,  0.0561, -0.0198,
-         -0.1746,  0.0287, -0.0030, -0.0157, -0.0426,  0.0443,  0.0444, -0.0646,
-         -0.0254, -0.0473,  0.0382, -0.0184, -0.0103, -0.1352, -0.0153,  0.0090,
-          0.0951, -0.0506, -0.0312, -0.1867,  0.0669,  0.0941, -0.0606, -0.0127,
-          0.0008, -0.0452,  0.0122, -0.0051, -0.0513, -0.0027,  0.0279, -0.0938,
-          0.0237,  0.1069, -0.1188, -0.0127, -0.0798, -0.0039, -0.0251, -0.0291]],
-       device='cuda:0', grad_fn=<ViewBackward0>), 'prob_cat': tensor([[0.0157, 0.0157, 0.0156, 0.0148, 0.0160, 0.0153, 0.0167, 0.0159, 0.0171,
-         0.0157, 0.0152, 0.0172, 0.0162, 0.0166, 0.0158, 0.0146, 0.0144, 0.0143,
-         0.0158, 0.0172, 0.0162, 0.0165, 0.0167, 0.0154, 0.0132, 0.0162, 0.0157,
-         0.0155, 0.0151, 0.0165, 0.0165, 0.0148, 0.0154, 0.0150, 0.0164, 0.0155,
-         0.0156, 0.0138, 0.0155, 0.0159, 0.0173, 0.0150, 0.0153, 0.0131, 0.0168,
-         0.0173, 0.0148, 0.0156, 0.0158, 0.0151, 0.0160, 0.0157, 0.0150, 0.0157,
-         0.0162, 0.0143, 0.0161, 0.0175, 0.0140, 0.0156, 0.0146, 0.0157, 0.0154,
-         0.0153]], device='cuda:0', grad_fn=<SoftmaxBackward0>), 'categorical': tensor([[0.2529, 0.0062, 0.0454, 0.0127, 0.0073, 0.0010, 0.0018, 0.0073, 0.0020,
-         0.0049, 0.0049, 0.0018, 0.0019, 0.0020, 0.0042, 0.0003, 0.0024, 0.0020,
-         0.0016, 0.0028, 0.0028, 0.0017, 0.0023, 0.0039, 0.0125, 0.0050, 0.0161,
-         0.0010, 0.0019, 0.0054, 0.0019, 0.0052, 0.0174, 0.1273, 0.0119, 0.0006,
-         0.0594, 0.0061, 0.0007, 0.0056, 0.0077, 0.0028, 0.0013, 0.0053, 0.0140,
-         0.0063, 0.0014, 0.0079, 0.0177, 0.0019, 0.0047, 0.1375, 0.0018, 0.0029,
-         0.0014, 0.0007, 0.0068, 0.0034, 0.0141, 0.0031, 0.0023, 0.0125, 0.0020,
-         0.0867]], device='cuda:0', grad_fn=<SoftmaxBackward0>)}
+infernce_outputA:  {'mean': tensor([[-0.0012,  0.0481]], device='cuda:0', grad_fn=<AddmmBackward0>), 'var': tensor([[0.6513, 0.6692]], device='cuda:0', grad_fn=<SoftplusBackward0>), 'gaussian': tensor([[-0.5746, -0.4035]], device='cuda:0', grad_fn=<AddBackward0>), 'logits': tensor([[ 9.2062e-02, -8.3141e-02,  1.3358e-02,  1.1652e-02, -2.0806e-03,
+         -1.0669e-02, -2.5835e-02, -3.6724e-02,  1.2129e-01, -2.6658e-02,
+         -5.1161e-02,  8.6509e-03,  2.3262e-02,  5.5166e-02,  3.8447e-03,
+         -2.5647e-02, -2.6697e-02,  7.8222e-02, -7.9742e-03, -3.2676e-02,
+         -2.4425e-02, -7.0541e-02, -8.3898e-02, -2.8799e-02, -1.7835e-02,
+          2.5917e-02, -1.2555e-01, -5.3959e-02, -1.2683e-02,  2.5490e-02,
+         -1.3218e-01,  1.0583e-01,  3.6423e-02, -7.1738e-02,  1.3047e-02,
+          1.9005e-05,  2.5495e-02, -2.1575e-02, -3.4676e-02,  3.5827e-02,
+          6.8137e-02, -9.0624e-02, -6.5256e-02, -7.9729e-02,  1.7953e-01,
+          5.2997e-02,  1.6246e-02,  6.9134e-02,  2.0559e-02, -6.7313e-02,
+          2.9012e-02,  3.3169e-03, -4.5506e-02,  1.3051e-02, -1.9048e-02,
+          7.6051e-03,  3.3733e-02,  3.0714e-02,  2.5599e-02, -2.2048e-02,
+          3.0203e-02, -5.1448e-02, -8.5813e-03,  3.1949e-02]], device='cuda:0',
+       grad_fn=<ViewBackward0>), 'prob_cat': tensor([[0.0172, 0.0144, 0.0159, 0.0158, 0.0156, 0.0155, 0.0152, 0.0151, 0.0177,
+         0.0152, 0.0149, 0.0158, 0.0160, 0.0165, 0.0157, 0.0152, 0.0152, 0.0169,
+         0.0155, 0.0151, 0.0153, 0.0146, 0.0144, 0.0152, 0.0154, 0.0161, 0.0138,
+         0.0148, 0.0154, 0.0160, 0.0137, 0.0174, 0.0162, 0.0146, 0.0158, 0.0156,
+         0.0160, 0.0153, 0.0151, 0.0162, 0.0167, 0.0143, 0.0147, 0.0144, 0.0187,
+         0.0165, 0.0159, 0.0168, 0.0160, 0.0146, 0.0161, 0.0157, 0.0149, 0.0158,
+         0.0153, 0.0158, 0.0162, 0.0161, 0.0160, 0.0153, 0.0161, 0.0149, 0.0155,
+         0.0161]], device='cuda:0', grad_fn=<SoftmaxBackward0>), 'categorical': tensor([[0.1006, 0.0062, 0.0027, 0.0028, 0.0103, 0.0016, 0.0551, 0.0012, 0.0026,
+         0.0031, 0.0127, 0.0025, 0.0532, 0.0305, 0.0039, 0.0118, 0.0174, 0.0065,
+         0.0052, 0.0177, 0.0045, 0.0037, 0.0096, 0.0089, 0.1359, 0.0033, 0.0127,
+         0.0079, 0.0046, 0.0212, 0.1216, 0.0087, 0.0036, 0.0096, 0.0034, 0.0097,
+         0.0230, 0.0055, 0.0145, 0.0043, 0.0089, 0.0159, 0.0106, 0.0042, 0.0085,
+         0.0035, 0.0088, 0.0063, 0.0079, 0.0043, 0.0045, 0.0157, 0.0024, 0.0132,
+         0.0297, 0.0035, 0.0298, 0.0123, 0.0081, 0.0036, 0.0012, 0.0283, 0.0018,
+         0.0029]], device='cuda:0', grad_fn=<SoftmaxBackward0>)}
 Esce da rward E_content
 forward ok
 forward_content ok
-imageA tensor([[-0.9104,  0.8933]], device='cuda:0', grad_fn=<AddBackward0>)
-imageB tensor([[-0.1154, -0.4106]], device='cuda:0', grad_fn=<AddBackward0>)
-x tensor([[-0.9104,  0.8933]], device='cuda:0')
+imageA tensor([[-0.5746, -0.4035]], device='cuda:0', grad_fn=<AddBackward0>)
+imageB tensor([[-0.0341,  2.1029]], device='cuda:0', grad_fn=<AddBackward0>)
+x tensor([[-0.5746, -0.4035]], device='cuda:0')
+Entra in dim(x)=2
+x: torch.Size([1, 1, 1, 2])
+x tensor([[-0.0341,  2.1029]], device='cuda:0')
+Entra in dim(x)=2
+x: torch.Size([1, 1, 1, 2])
+Entra in if train
+Size of flatten_A:  torch.Size([1, 139968])
+size of flatten_B  torch.Size([1, 139968])
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+infernce_outputA:  {'mean': tensor([[0.0266, 0.0648]], device='cuda:0', grad_fn=<AddmmBackward0>), 'var': tensor([[0.6963, 0.6314]], device='cuda:0', grad_fn=<SoftplusBackward0>), 'gaussian': tensor([[-0.2284,  0.4987]], device='cuda:0', grad_fn=<AddBackward0>), 'logits': tensor([[ 0.0717,  0.0090,  0.0580,  0.0125, -0.0231, -0.0705, -0.0819, -0.0327,
+          0.1020,  0.0087,  0.0095,  0.0571,  0.0198,  0.0503, -0.0309,  0.0221,
+          0.0224,  0.0436, -0.0356, -0.0137, -0.0289, -0.0146, -0.0680,  0.0185,
+          0.0317,  0.0078, -0.0480, -0.0509,  0.0295,  0.0366, -0.1423,  0.0420,
+          0.0582, -0.0652, -0.0332,  0.0368,  0.0490,  0.0203,  0.0569,  0.0060,
+          0.0407,  0.0067, -0.1039, -0.0787,  0.1110,  0.0302, -0.0318,  0.0132,
+          0.0229, -0.0728, -0.0248,  0.0782,  0.0165,  0.0020,  0.0175,  0.0670,
+         -0.0775, -0.0212,  0.0964, -0.0135,  0.0236, -0.1134,  0.0358,  0.0137]],
+       device='cuda:0', grad_fn=<ViewBackward0>), 'prob_cat': tensor([[0.0167, 0.0157, 0.0165, 0.0158, 0.0152, 0.0145, 0.0143, 0.0151, 0.0172,
+         0.0157, 0.0157, 0.0165, 0.0159, 0.0164, 0.0151, 0.0159, 0.0159, 0.0163,
+         0.0150, 0.0153, 0.0151, 0.0153, 0.0145, 0.0159, 0.0161, 0.0157, 0.0148,
+         0.0148, 0.0160, 0.0161, 0.0135, 0.0162, 0.0165, 0.0146, 0.0151, 0.0161,
+         0.0163, 0.0159, 0.0165, 0.0157, 0.0162, 0.0157, 0.0140, 0.0144, 0.0174,
+         0.0160, 0.0151, 0.0158, 0.0159, 0.0145, 0.0152, 0.0168, 0.0158, 0.0156,
+         0.0158, 0.0166, 0.0144, 0.0152, 0.0171, 0.0154, 0.0159, 0.0139, 0.0161,
+         0.0158]], device='cuda:0', grad_fn=<SoftmaxBackward0>), 'categorical': tensor([[0.0051, 0.0024, 0.0165, 0.0181, 0.0029, 0.0016, 0.0016, 0.0019, 0.0038,
+         0.0124, 0.1558, 0.0263, 0.0013, 0.0024, 0.0055, 0.0210, 0.0012, 0.0360,
+         0.0121, 0.0084, 0.0039, 0.0103, 0.0010, 0.0196, 0.0046, 0.0030, 0.0018,
+         0.0030, 0.0828, 0.0092, 0.0009, 0.0068, 0.0040, 0.0015, 0.0091, 0.0078,
+         0.1338, 0.0044, 0.0153, 0.0087, 0.0096, 0.1200, 0.0048, 0.0078, 0.0154,
+         0.0054, 0.0536, 0.0024, 0.0205, 0.0033, 0.0173, 0.0048, 0.0160, 0.0017,
+         0.0074, 0.0058, 0.0013, 0.0164, 0.0018, 0.0043, 0.0037, 0.0019, 0.0036,
+         0.0034]], device='cuda:0', grad_fn=<SoftmaxBackward0>)}
+Esce da rward E_content
+forward ok
+forward_content ok
+imageA tensor([[-0.2284,  0.4987]], device='cuda:0', grad_fn=<AddBackward0>)
+imageB tensor([[-0.2973, -0.2345]], device='cuda:0', grad_fn=<AddBackward0>)
+x tensor([[-0.2284,  0.4987]], device='cuda:0')
+Entra in dim(x)=2
+x: torch.Size([1, 1, 1, 2])
+x tensor([[-0.2973, -0.2345]], device='cuda:0')
+Entra in dim(x)=2
+x: torch.Size([1, 1, 1, 2])
+Entra in else train
+Size of flatten_A:  torch.Size([1, 139968])
+size of flatten_B  torch.Size([1, 139968])
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=139968, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+infernce_outputA:  {'mean': tensor([[-0.0163,  0.0238]], device='cuda:0', grad_fn=<AddmmBackward0>), 'var': tensor([[0.6606, 0.6772]], device='cuda:0', grad_fn=<SoftplusBackward0>), 'gaussian': tensor([[ 0.2517, -1.4340]], device='cuda:0', grad_fn=<AddBackward0>), 'logits': tensor([[ 0.1078, -0.0491,  0.0119, -0.0373, -0.0495,  0.0044, -0.0466, -0.0362,
+          0.0987, -0.0448, -0.0761, -0.0483,  0.0222,  0.0931,  0.0379, -0.0053,
+          0.0037, -0.0327, -0.0389,  0.0128,  0.0138, -0.0003, -0.0036,  0.0108,
+          0.0237,  0.0130, -0.0636, -0.0470, -0.0067,  0.0712, -0.0635,  0.0754,
+          0.0533, -0.0331, -0.0629,  0.0133,  0.0761, -0.0295,  0.0378,  0.0203,
+          0.0834, -0.0795, -0.0778, -0.0248,  0.1119,  0.0580,  0.0201,  0.0333,
+         -0.0399, -0.0634, -0.0376, -0.0094,  0.0094, -0.0160,  0.0253,  0.0360,
+         -0.0789, -0.0360,  0.0187, -0.0152,  0.0716, -0.0640, -0.0201, -0.0717]],
+       device='cuda:0', grad_fn=<ViewBackward0>), 'prob_cat': tensor([[0.0174, 0.0149, 0.0158, 0.0151, 0.0149, 0.0157, 0.0149, 0.0151, 0.0173,
+         0.0150, 0.0145, 0.0149, 0.0160, 0.0172, 0.0162, 0.0156, 0.0157, 0.0151,
+         0.0150, 0.0158, 0.0159, 0.0156, 0.0156, 0.0158, 0.0160, 0.0158, 0.0147,
+         0.0149, 0.0155, 0.0168, 0.0147, 0.0169, 0.0165, 0.0151, 0.0147, 0.0158,
+         0.0169, 0.0152, 0.0162, 0.0160, 0.0170, 0.0144, 0.0145, 0.0153, 0.0175,
+         0.0166, 0.0160, 0.0162, 0.0150, 0.0147, 0.0151, 0.0155, 0.0158, 0.0154,
+         0.0160, 0.0162, 0.0145, 0.0151, 0.0159, 0.0154, 0.0168, 0.0147, 0.0153,
+         0.0146]], device='cuda:0', grad_fn=<SoftmaxBackward0>), 'categorical': tensor([[0.0033, 0.0050, 0.0124, 0.0044, 0.0155, 0.0047, 0.0066, 0.0025, 0.0035,
+         0.0051, 0.0212, 0.0140, 0.0084, 0.0031, 0.3154, 0.0105, 0.0131, 0.0155,
+         0.0980, 0.0071, 0.0106, 0.0103, 0.0035, 0.0083, 0.0302, 0.0094, 0.0327,
+         0.0282, 0.0020, 0.0056, 0.0016, 0.0082, 0.0300, 0.0074, 0.0040, 0.0247,
+         0.0043, 0.0094, 0.0026, 0.0060, 0.0028, 0.0089, 0.0042, 0.0040, 0.0116,
+         0.0081, 0.0105, 0.0280, 0.0036, 0.0064, 0.0026, 0.0041, 0.0092, 0.0031,
+         0.0011, 0.0066, 0.0046, 0.0191, 0.0123, 0.0045, 0.0060, 0.0062, 0.0097,
+         0.0143]], device='cuda:0', grad_fn=<SoftmaxBackward0>)}
+Esce da rward E_content
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=8, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
+Entra in forward infNet
+Entra in qyx
+entra in else
+layer: Linear(in_features=8, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in else
+layer: Linear(in_features=512, out_features=512, bias=True)
+entra in else
+layer: ReLU()
+entra in if
+Esce da qyx
+Esce da forward infNet
 Traceback (most recent call last):
   File "/home/davide/Greta/DRIT/src/train.py", line 84, in <module>
     main()
-  File "/home/davide/Greta/DRIT/src/train.py", line 53, in main
-    model.update_D_content(images_a, images_b)
-  File "/home/davide/Greta/DRIT/src/model.py", line 253, in update_D_content
-    loss_D_Content = self.backward_contentD(self.z_content_a, self.z_content_b)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/model.py", line 321, in backward_contentD
-    pred_fake = self.disContent.forward(imageA.detach())
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/networks.py", line 25, in forward
-    out = self.model(x)
-          ^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 250, in forward
-    input = module(input)
-            ^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/src/networks.py", line 641, in forward
-    return self.model(x)
-           ^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/container.py", line 250, in forward
-    input = module(input)
-            ^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/modules/padding.py", line 368, in forward
-    return F.pad(input, self.padding, "reflect")
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/davide/Greta/DRIT/.venv/lib/python3.12/site-packages/torch/nn/functional.py", line 5096, in pad
-    return torch._C._nn.pad(input, pad, mode, value)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-NotImplementedError: Only 2D, 3D, 4D, 5D padding with non-constant padding are supported for now
+  File "/home/davide/Greta/DRIT/src/train.py", line 57, in main
+    model.update_D(images_a, images_b)
+  File "/home/davide/Greta/DRIT/src/model.py", line 261, in update_D
+    self.forward()
+  File "/home/davide/Greta/DRIT/src/model.py", line 159, in forward
+    self.mu_a, self.logvar_a, self.mu_b, self.logvar_b = self.enc_a.forward(self.real_A_encoded, self.real_B_encoded)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 4)

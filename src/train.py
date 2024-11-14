@@ -59,7 +59,7 @@ def main():
 
       # save to display file
       if not opts.no_display_img:
-        saver.write_display(total_it, model)
+        saver.write_display(-1,total_it, model)
 
       print('total_it: %d (ep %d, it %d), lr %08f' % (total_it, ep, it, model.gen_opt.param_groups[0]['lr']))
       total_it += 1
