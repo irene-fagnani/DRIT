@@ -439,12 +439,12 @@ class G(nn.Module):
 class G_concat(nn.Module):
   def __init__(self, output_dim_a, output_dim_b, x_dim, y_dim, z_dim, nz):
     super(G_concat, self).__init__()
-    self.nz = nz
-    tch = 256
+    self.nz = 2 #nz
+    tch = 1 #256
     dec_share = []
     dec_share += [INSResBlock(tch, tch)]
     self.dec_share = nn.Sequential(*dec_share)
-    tch = 256+self.nz
+    tch = 1+self.nz
     decA1 = []
     for i in range(0, 3):
       decA1 += [INSResBlock(tch, tch)]
@@ -496,10 +496,14 @@ class G_concat(nn.Module):
       z = y_mu + torch.sqrt(y_var) * torch.randn_like(y_var)
       return z
 
-  def forward_a(self, x,y):
+  def forward_a(self, x,y): # content,attr
     z = self.sample_z_a(y)
+    x = x.unsqueeze(0).unsqueeze(0)
     out0 = self.dec_share(x)
     z_img = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), x.size(2), x.size(3))
+    print("z",z_img.size())
+    print("out0",out0.size())
+    out0=out0.expand(4,-1,-1,-1)
     x_and_z = torch.cat([out0, z_img], 1)
     out1 = self.decA1(x_and_z)
     z_img2 = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), out1.size(2), out1.size(3))
@@ -511,7 +515,9 @@ class G_concat(nn.Module):
     z_img4 = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), out3.size(2), out3.size(3))
     x_and_z4 = torch.cat([out3, z_img4], 1)
     out4 = self.decA4(x_and_z4)
-    out4=self.generative_net_a(out4,z,y)
+    print("si",out4.size())
+    print("z",z_img4.size())
+    out4=self.generative_net_a(z_img4,out4)#out4,
     return out4
 
   def forward_b(self, x,y):
@@ -529,7 +535,7 @@ class G_concat(nn.Module):
     z_img4 = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), out3.size(2), out3.size(3))
     x_and_z4 = torch.cat([out3, z_img4], 1)
     out4 = self.decB4(x_and_z4)
-    out4=self.generative_net_b(out4,z,y)
+
     return out4
 
 ####################################################################

@@ -161,7 +161,7 @@ class GenerativeNet(nn.Module):
 
     # p(z|y)
     self.y_mu = nn.Linear(z_dim, y_dim)#y_dim, z_dim
-    self.y_var = nn.Linear(y_dim, z_dim)#
+    self.y_var = nn.Linear(z_dim,y_dim)#
 
     # p(x|z) genera x dato z
     self.generative_pxz = torch.nn.ModuleList([
@@ -175,6 +175,7 @@ class GenerativeNet(nn.Module):
 
   # p(z|y)
   def pzy(self, y):
+    print("y",y.size())
     y_mu = self.y_mu(y)
     y_var = F.softplus(self.y_var(y)) # garantisce che la varianza sia sempre positiva
     return y_mu, y_var
