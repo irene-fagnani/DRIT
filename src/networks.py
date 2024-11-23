@@ -131,19 +131,19 @@ class E_content(nn.Module):
 
   #def forward(self, xa, xb):
   def forward(self, xa, xb, temperature=1.0, hard=0):
-    # print("ca",xa.size())
+    print("ca",xa.size())
     # print("Entra in forward E_content")
-    # outputA = self.convA(xa)
-    # print("size of outputA1: ", outputA.size())
-    # outputB = self.convB(xb)
-    # outputA = self.conv_share(outputA)
-    # print("size of outputA: ", outputA.size())
-    # outputB = self.conv_share(outputB)
+    outputA = self.convA(xa)
+    print("size of outputA1: ", outputA.size())
+    outputB = self.convB(xb)
+    outputA = self.conv_share(outputA)
+    print("size of outputA: ", outputA.size())
+    outputB = self.conv_share(outputB)
     
     # flatten the concolutional output, to be compatible with inference net
-    flattened_A=xa.view(xa.size(0), -1)
+    flattened_A=outputA.view(outputA.size(0), -1)
     print("Size of flatten_A: ", flattened_A.size())
-    flattened_B=xb.view(xb.size(0), -1)
+    flattened_B=outputB.view(outputB.size(0), -1)
     print("size of flatten_B ", flattened_B.size())
     flattened_B.size()
     
@@ -404,7 +404,7 @@ class G(nn.Module):
         z = y_mu + torch.sqrt(y_var) * torch.randn_like(y_var)
         return z
 
-  def forward_a(self,z , y):
+  def forward_a(self,z , y): 
         # Ottieni un campione z condizionato su y
         z_random = self.sample_z_a(y)
         z_mlp = self.mlpA(z_random)
@@ -440,7 +440,7 @@ class G_concat(nn.Module):
   def __init__(self, output_dim_a, output_dim_b, x_dim, y_dim, z_dim, nz):
     super(G_concat, self).__init__()
     self.nz = 2 #nz
-    tch = 1 #256
+    tch = 148 #256
     dec_share = []
     dec_share += [INSResBlock(tch, tch)]
     self.dec_share = nn.Sequential(*dec_share)
@@ -496,15 +496,17 @@ class G_concat(nn.Module):
       z = y_mu + torch.sqrt(y_var) * torch.randn_like(y_var)
       return z
 
-  def forward_a(self, x,y): # content,attr
+  def forward_a(self, x,y): # content,attr (4,2) (4,64)
     z = self.sample_z_a(y)
     x = x.unsqueeze(0).unsqueeze(0)
     out0 = self.dec_share(x)
     z_img = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), x.size(2), x.size(3))
     print("z",z_img.size())
-    print("out0",out0.size())
+    
     out0=out0.expand(4,-1,-1,-1)
+    print("out0",out0.size())
     x_and_z = torch.cat([out0, z_img], 1)
+    print("x_z",x_and_z.size())
     out1 = self.decA1(x_and_z)
     z_img2 = z.view(z.size(0), z.size(1), 1, 1).expand(z.size(0), z.size(1), out1.size(2), out1.size(3))
     x_and_z2 = torch.cat([out1, z_img2], 1)

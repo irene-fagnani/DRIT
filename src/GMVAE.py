@@ -160,8 +160,8 @@ class GenerativeNet(nn.Module):
     super(GenerativeNet, self).__init__()
 
     # p(z|y)
-    self.y_mu = nn.Linear(z_dim, y_dim)#y_dim, z_dim
-    self.y_var = nn.Linear(z_dim,y_dim)#
+    self.y_mu = nn.Linear(z_dim,z_dim*y_dim)#y_dim, z_dim
+    self.y_var = nn.Linear(z_dim,z_dim*y_dim)#
 
     # p(x|z) genera x dato z
     self.generative_pxz = torch.nn.ModuleList([

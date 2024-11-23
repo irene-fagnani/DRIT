@@ -177,15 +177,20 @@ class DRIT(nn.Module):
 
     # first cross translation
     if not self.no_ms:
-      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) # Gaurda qui: z_content e z_attr sono le nostre z e y
+      print("Z_CONTENT_B",self.z_content_b.size())
+      print("Z_CONTENT_A",self.z_content_a.size())
+      input_content_forA = torch.cat((self.z_content_b, self.z_content_a, self.z_content_b, self.z_content_b),0) 
       input_content_forB = torch.cat((self.z_content_a, self.z_content_b, self.z_content_a, self.z_content_a),0)
       print("Dimensione di z_attr_a:", self.z_attr_a.size())
       print("Dimensione di z_random:", self.z_random.size())
       print("Dimensione di z_random2:", self.z_random2.size())
 
+      print("Z_ATTR_B",self.z_attr_b.size())
+      print("Z_ATTR_A",self.z_attr_a.size())
       input_attr_forA = torch.cat((self.z_attr_a, self.z_attr_a, self.z_random, self.z_random2),0)
       input_attr_forB = torch.cat((self.z_attr_b, self.z_attr_b, self.z_random, self.z_random2),0)
-      output_fakeA = self.gen.forward_a(input_content_forA, input_attr_forA)
+      
+      output_fakeA = self.gen.forward_a(input_content_forA,input_attr_forA)
       output_fakeA_img=output_fakeA["x_rec"]
       output_fakeB = self.gen.forward_b(input_content_forB, input_attr_forB)
       output_fakeB_img=output_fakeB["x_rec"]
